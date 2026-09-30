@@ -219,7 +219,7 @@ export default function CharacterSelect() {
               <div className="flex items-center gap-3">
                 <div className="w-16 h-16 rounded-2xl bg-sky-100 border-2 border-sky-300 p-1 flex-shrink-0 flex items-center justify-center overflow-hidden">
                   <img
-                    src={selectedChar.avatar || `/characters/${selectedChar.id}/${selectedChar.id}_1_normal.png`}
+                    src={selectedChar.avatar ? assetUrl(selectedChar.avatar) : assetUrl(`/characters/${selectedChar.id}/${selectedChar.id}_1_normal.png`)}
                     alt={selectedChar.name}
                     className="w-full h-full object-contain"
                   />
