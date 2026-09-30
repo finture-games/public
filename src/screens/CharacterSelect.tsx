@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { CHARACTERS } from '../data/characters'
 import { useGameStore } from '../store/game'
-import { formatRp } from '../lib/format'
+import { formatRp, assetUrl } from '../lib/format'
 import Button from '../components/Button'
 
 export default function CharacterSelect() {
@@ -36,7 +36,7 @@ export default function CharacterSelect() {
     <div className="relative w-full h-[100dvh] min-h-[100dvh] flex flex-col justify-between items-center px-4 py-4 overflow-hidden font-display select-none">
       {/* Theme Background Image */}
       <img
-        src="/theme/background.jpeg"
+        src={assetUrl('/theme/background.jpeg')}
         alt="Background"
         className="absolute inset-0 w-full h-full object-cover object-center z-0 pointer-events-none"
       />
@@ -279,7 +279,9 @@ function CharacterCard({
   isSelected: boolean
   onSelect: () => void
 }) {
-  const avatarPath = character.avatar || `/characters/${character.id}/${character.id}_half.png`
+  const avatarPath = character.avatar
+    ? assetUrl(character.avatar)
+    : assetUrl(`/characters/${character.id}/${character.id}_half.png`)
 
   return (
     <motion.div

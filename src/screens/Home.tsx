@@ -3,7 +3,7 @@ import { motion } from 'framer-motion'
 import { useGameStore } from '../store/game'
 import { CHARACTERS } from '../data/characters'
 import Board3D from '../components/Board3D'
-import { formatRp } from '../lib/format'
+import { formatRp, assetUrl } from '../lib/format'
 
 export default function Home() {
   const navigate = useGameStore((s) => s.navigate)
@@ -20,14 +20,14 @@ export default function Home() {
     : CHARACTERS[0]) ?? CHARACTERS[0]
 
   const charAvatarPath = activeChar
-    ? activeChar.avatar || `/characters/${activeChar.id}/${activeChar.id}_1_normal.png`
-    : `/characters/alep/alep_1_normal.png`
+    ? activeChar.avatar ? assetUrl(activeChar.avatar) : assetUrl(`/characters/${activeChar.id}/${activeChar.id}_1_normal.png`)
+    : assetUrl(`/characters/alep/alep_1_normal.png`)
 
   return (
     <div className="relative w-full h-[100dvh] min-h-[100dvh] flex flex-col justify-between items-center px-4 py-4 overflow-x-hidden overflow-y-auto font-display select-none">
       {/* Background Image - Full Viewport Cover */}
       <img
-        src="/theme/background.jpeg"
+        src={assetUrl('/theme/background.jpeg')}
         alt="Background"
         className="absolute inset-0 w-full h-full object-cover object-center z-0 pointer-events-none"
       />

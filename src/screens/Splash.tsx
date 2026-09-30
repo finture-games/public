@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { useGameStore } from '../store/game'
+import { assetUrl } from '../lib/format'
 
 interface CharConfig {
   id: string
@@ -14,11 +15,11 @@ interface CharConfig {
 }
 
 const CHARACTERS: CharConfig[] = [
-  { id: 'alep', name: 'Alep (Tengah)', src: '/characters/alep/alep_1_normal.png', x: -13, y: -76, scale: 1, rotate: 0, zIndex: 10 },
-  { id: 'mamad', name: 'Mamad (Kiri Atas)', src: '/characters/mamad/mamad_1_normal.png', x: -121, y: -32, scale: 0.9, rotate: -3, zIndex: 12 },
-  { id: 'wawan', name: 'Wawan (Kanan Atas)', src: '/characters/wawan/wawan_1_normal.png', x: 115, y: -32, scale: 0.9, rotate: 3, zIndex: 12 },
-  { id: 'angel', name: 'Angel (Kiri Depan)', src: '/characters/angel/angel_1_normal.png', x: -60, y: 72, scale: 1, rotate: 0, zIndex: 20, clipBottom: true },
-  { id: 'alea', name: 'Alea (Kanan Depan)', src: '/characters/alea/alea_1_normal.png', x: 43, y: 42, scale: 1, rotate: 0, zIndex: 21, clipBottom: true },
+  { id: 'alep', name: 'Alep (Tengah)', src: assetUrl('/characters/alep/alep_1_normal.png'), x: -13, y: -76, scale: 1, rotate: 0, zIndex: 10 },
+  { id: 'mamad', name: 'Mamad (Kiri Atas)', src: assetUrl('/characters/mamad/mamad_1_normal.png'), x: -121, y: -32, scale: 0.9, rotate: -3, zIndex: 12 },
+  { id: 'wawan', name: 'Wawan (Kanan Atas)', src: assetUrl('/characters/wawan/wawan_1_normal.png'), x: 115, y: -32, scale: 0.9, rotate: 3, zIndex: 12 },
+  { id: 'angel', name: 'Angel (Kiri Depan)', src: assetUrl('/characters/angel/angel_1_normal.png'), x: -60, y: 72, scale: 1, rotate: 0, zIndex: 20, clipBottom: true },
+  { id: 'alea', name: 'Alea (Kanan Depan)', src: assetUrl('/characters/alea/alea_1_normal.png'), x: 43, y: 42, scale: 1, rotate: 0, zIndex: 21, clipBottom: true },
 ]
 
 export default function Splash() {
@@ -41,7 +42,7 @@ export default function Splash() {
     <div className="relative w-full h-[100dvh] min-h-[100dvh] flex flex-col justify-between items-center px-4 py-6 overflow-hidden font-display select-none">
       {/* Background Image - Full Viewport Cover */}
       <img
-        src="/theme/background.jpeg"
+        src={assetUrl('/theme/background.jpeg')}
         alt="Background"
         className="absolute inset-0 w-full h-full object-cover object-center z-0 pointer-events-none"
       />
@@ -152,12 +153,12 @@ export default function Splash() {
 
           {/* Left Badge - Growth Chart */}
           <div className="absolute -left-2 bottom-6 z-30 bg-white p-2 rounded-2xl shadow-xl border-2 border-sky-100 flex items-center justify-center pointer-events-none">
-            <img src="/item/grafik_pertumbuhan.png" alt="Grafik" className="w-10 h-10 object-contain" />
+            <img src={assetUrl('/item/grafik_pertumbuhan.png')} alt="Grafik" className="w-10 h-10 object-contain" />
           </div>
 
           {/* Right Badge - Gold Coin */}
           <div className="absolute -right-2 bottom-6 z-30 bg-white p-2 rounded-2xl shadow-xl border-2 border-amber-100 flex items-center justify-center pointer-events-none">
-            <img src="/item/koin_emas.png" alt="Koin" className="w-10 h-10 object-contain" />
+            <img src={assetUrl('/item/koin_emas.png')} alt="Koin" className="w-10 h-10 object-contain" />
           </div>
         </motion.div>
 

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { useGameStore } from '../store/game'
 import { emailToUserId } from '../lib/firebase'
+import { assetUrl } from '../lib/format'
 
 export default function Login() {
   const setAuth = useGameStore((s) => s.setAuth)
@@ -48,7 +49,7 @@ export default function Login() {
     <div className="relative w-full h-[100dvh] min-h-[100dvh] flex flex-col justify-between items-center px-4 py-6 overflow-hidden font-display select-none">
       {/* Background Image - Full Viewport Cover */}
       <img
-        src="/theme/background.jpeg"
+        src={assetUrl('/theme/background.jpeg')}
         alt="Background"
         className="absolute inset-0 w-full h-full object-cover object-center z-0 pointer-events-none"
       />

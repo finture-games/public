@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import type { ScenarioCard, TileType } from '../data/types'
 import { TILE_COLORS } from '../data/types'
 import { useGameStore } from '../store/game'
+import { assetUrl } from '../lib/format'
 
 export function getCharacterExpression(characterId: string, tileType: TileType): string {
   let exprName = '4_surprised'
@@ -30,7 +31,7 @@ export function getCharacterExpression(characterId: string, tileType: TileType):
       exprName = '4_surprised'
   }
 
-  return `/characters/${characterId}/${characterId}_${exprName}.png`
+  return assetUrl(`/characters/${characterId}/${characterId}_${exprName}.png`)
 }
 
 export default function DecisionCard({
