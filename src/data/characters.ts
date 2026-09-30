@@ -18,6 +18,8 @@ export const CHARACTERS: CharacterDef[] = [
     targetName: 'Headset Gaming',
     targetAmount: 250000,
     color: '#EF4444',
+    selectOffset: 0,
+    decisionOffset: -72,
   },
   {
     id: 'angel',
@@ -30,6 +32,8 @@ export const CHARACTERS: CharacterDef[] = [
     targetName: 'Kemeja Hangout',
     targetAmount: 300000,
     color: '#F59E0B',
+    selectOffset: 4,
+    decisionOffset: -68,
   },
   {
     id: 'alea',
@@ -42,6 +46,8 @@ export const CHARACTERS: CharacterDef[] = [
     targetName: 'Kamera Digital Vintage',
     targetAmount: 280000,
     color: '#3B82F6',
+    selectOffset: 2,
+    decisionOffset: -70,
   },
   {
     id: 'wawan',
@@ -54,6 +60,8 @@ export const CHARACTERS: CharacterDef[] = [
     targetName: 'Keyboard Mekanikal',
     targetAmount: 320000,
     color: '#22C55E',
+    selectOffset: -2,
+    decisionOffset: -74,
   },
   {
     id: 'mamad',
@@ -66,6 +74,8 @@ export const CHARACTERS: CharacterDef[] = [
     targetName: 'Sepatu Bola',
     targetAmount: 310000,
     color: '#6366F1',
+    selectOffset: 0,
+    decisionOffset: -72,
   },
 ]
 

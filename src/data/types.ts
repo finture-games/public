@@ -51,6 +51,8 @@ export interface CharacterDef {
   targetName: string
   targetAmount: number
   color: string
+  selectOffset?: number
+  decisionOffset?: number
 }
 
 export interface TileDef {

@@ -4,6 +4,7 @@ import type { ScenarioCard, TileType } from '../data/types'
 import { TILE_COLORS } from '../data/types'
 import { useGameStore } from '../store/game'
 import { assetUrl } from '../lib/format'
+import { CHARACTERS } from '../data/characters'
 
 export function getCharacterExpression(characterId: string, tileType: TileType): string {
   let exprName = '4_surprised'
@@ -45,6 +46,8 @@ export default function DecisionCard({
 }) {
   const session = useGameStore((s) => s.session)
   const charId = session?.characterId ?? 'alep'
+  const charDef = CHARACTERS.find((c) => c.id === charId)
+  const offset = charDef?.decisionOffset ?? -72
   const exprAvatarPath = getCharacterExpression(charId, card.tileType)
 
   const [flipped, setFlipped] = useState(reduceMotion)
@@ -61,8 +64,11 @@ export default function DecisionCard({
         className="relative rounded-[20px] bg-white border-2 border-primary/20 shadow-[0_12px_32px_rgba(30,27,58,0.25)] max-w-[420px] mx-auto"
         style={{ perspective: 1000 }}
       >
-        {/* Offside Pop-Out Character Expression Avatar (Fine-tuned +4px higher) */}
-        <div className="absolute -top-[80px] sm:-top-[88px] left-2.5 sm:left-3.5 z-30 w-20 h-22 sm:w-24 sm:h-26 pointer-events-none filter drop-shadow-[0_6px_12px_rgba(0,0,0,0.3)]">
+        {/* Offside Pop-Out Character Expression Avatar - Customized per character offset */}
+        <div
+          style={{ top: `${offset}px` }}
+          className="absolute left-2.5 sm:left-3.5 z-30 w-20 h-22 sm:w-24 sm:h-26 pointer-events-none filter drop-shadow-[0_6px_12px_rgba(0,0,0,0.3)]"
+        >
           <img
             src={exprAvatarPath}
             alt="Ekspresi Karakter"
