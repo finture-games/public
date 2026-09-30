@@ -151,7 +151,7 @@ export default function CharacterSelect() {
       </div>
 
       {/* Character Cards Section */}
-      <div className="relative z-10 w-full max-w-[350px] my-auto flex flex-col gap-6 sm:gap-7 items-center px-1">
+      <div className="relative z-10 w-full max-w-[350px] my-auto flex flex-col gap-8 sm:gap-9 items-center px-1 pt-4 pb-2">
         {/* Row 1: Alep & Angel */}
         <div className="grid grid-cols-2 gap-4 sm:gap-5 w-full">
           <CharacterCard
@@ -288,7 +288,7 @@ function CharacterCard({
       whileHover={{ scale: 1.04 }}
       whileTap={{ scale: 0.96 }}
       onClick={onSelect}
-      className={`relative w-full h-36 sm:h-40 rounded-2xl bg-white border-3 shadow-md flex flex-col items-center justify-between overflow-hidden cursor-pointer transition-all duration-150 ${
+      className={`relative w-full h-36 sm:h-40 rounded-2xl bg-white border-3 shadow-md flex flex-col items-center justify-between overflow-visible cursor-pointer transition-all duration-150 ${
         isSelected
           ? 'border-amber-400 ring-4 ring-amber-300/60 shadow-xl scale-[1.03]'
           : 'border-white hover:border-sky-200'
@@ -297,17 +297,17 @@ function CharacterCard({
       {/* Background Soft Glow */}
       <div className="absolute inset-0 rounded-2xl bg-gradient-to-b from-sky-50/70 to-white z-0 pointer-events-none overflow-hidden" />
 
-      {/* Character Image - Positioned to touch bottom name panel seamlessly */}
-      <div className="relative z-10 w-full flex-1 flex items-end justify-center pt-2 overflow-hidden">
+      {/* Character Image - Allows head/hair to pop out offside top seamlessly */}
+      <div className="relative z-10 w-full flex-1 flex items-end justify-center overflow-visible">
         <img
           src={avatarPath}
           alt={character.name}
-          className="w-full h-[115%] object-contain object-bottom drop-shadow-md transform hover:scale-105 transition-transform duration-200 translate-y-1"
+          className="absolute bottom-0 w-full h-[125%] object-contain object-bottom drop-shadow-md transform hover:scale-105 transition-transform duration-200"
         />
       </div>
 
       {/* Clean Character Name Badge at Bottom (No Ribbon) */}
-      <div className="relative z-20 w-full bg-slate-900/85 text-white font-extrabold text-xs tracking-wide py-1 px-2 text-center">
+      <div className="relative z-20 w-full bg-slate-900/85 text-white font-extrabold text-xs tracking-wide py-1 px-2 text-center rounded-b-xl">
         {character.name}
       </div>
     </motion.div>
