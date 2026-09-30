@@ -297,12 +297,12 @@ function CharacterCard({
       {/* Background Soft Glow */}
       <div className="absolute inset-0 rounded-2xl bg-gradient-to-b from-sky-50/70 to-white z-0 pointer-events-none overflow-hidden" />
 
-      {/* Character Image */}
-      <div className="relative z-10 w-full h-[78%] flex items-end justify-center pt-1 pb-1 overflow-hidden">
+      {/* Character Image - Positioned to touch bottom name panel seamlessly */}
+      <div className="relative z-10 w-full flex-1 flex items-end justify-center pt-2 overflow-hidden">
         <img
           src={avatarPath}
           alt={character.name}
-          className="w-full h-full object-contain object-bottom drop-shadow-md transform hover:scale-105 transition-transform duration-200"
+          className="w-full h-[115%] object-contain object-bottom drop-shadow-md transform hover:scale-105 transition-transform duration-200 translate-y-1"
         />
       </div>
 
