@@ -13,8 +13,16 @@ export function formatScore(n: number): string {
 }
 
 export function assetUrl(path: string): string {
+  if (!path) return ''
+  if (path.startsWith('http://') || path.startsWith('https://')) return path
+
   const base = import.meta.env.BASE_URL || '/'
   const cleanBase = base.endsWith('/') ? base : base + '/'
   const cleanPath = path.startsWith('/') ? path.slice(1) : path
+
+  if (base !== '/' && (path.startsWith(base) || cleanPath.startsWith(cleanBase.slice(1)))) {
+    return path.startsWith('/') ? path : '/' + path
+  }
+
   return cleanBase + cleanPath
 }

@@ -279,9 +279,9 @@ function CharacterCard({
   isSelected: boolean
   onSelect: () => void
 }) {
-  const avatarPath = character.avatar
-    ? assetUrl(character.avatar)
-    : assetUrl(`/characters/${character.id}/${character.id}_half.png`)
+  const avatarPath = character.avatar.startsWith('http') || character.avatar.startsWith('/finture_games/')
+    ? character.avatar
+    : assetUrl(character.avatar)
 
   return (
     <motion.div
