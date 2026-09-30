@@ -4,13 +4,14 @@ import type {
   TileType,
   ScenarioCard,
 } from './types'
+import { assetUrl } from '../lib/format'
 
 export const CHARACTERS: CharacterDef[] = [
   {
     id: 'alep',
     name: 'Alep',
     emoji: '🔴',
-    avatar: '/characters/alep/alep_half.png',
+    avatar: assetUrl('/characters/alep/alep_half.png'),
     background: 'Anak santai, hobi nongkrong & jajan hemat',
     weeklyAllowance: 90000,
     startMoney: 0,
@@ -22,7 +23,7 @@ export const CHARACTERS: CharacterDef[] = [
     id: 'angel',
     name: 'Angel',
     emoji: '✨',
-    avatar: '/characters/angel/angel_half.png',
+    avatar: assetUrl('/characters/angel/angel_half.png'),
     background: 'Beauty enthusiast, rajin catat pengeluaran',
     weeklyAllowance: 110000,
     startMoney: 0,
@@ -34,7 +35,7 @@ export const CHARACTERS: CharacterDef[] = [
     id: 'alea',
     name: 'Alea',
     emoji: '☕',
-    avatar: '/characters/alea/alea_half.png',
+    avatar: assetUrl('/characters/alea/alea_half.png'),
     background: 'Penikmat kopi & tren outfit viral',
     weeklyAllowance: 100000,
     startMoney: 0,
@@ -46,7 +47,7 @@ export const CHARACTERS: CharacterDef[] = [
     id: 'wawan',
     name: 'Wawan',
     emoji: '👓',
-    avatar: '/characters/wawan/wawan_half.png',
+    avatar: assetUrl('/characters/wawan/wawan_half.png'),
     background: 'Anak SMK rajin, hemat & paham instrumen investasi',
     weeklyAllowance: 130000,
     startMoney: 0,
@@ -58,7 +59,7 @@ export const CHARACTERS: CharacterDef[] = [
     id: 'mamad',
     name: 'Mamad',
     emoji: '👍',
-    avatar: '/characters/mamad/mamad_half.png',
+    avatar: assetUrl('/characters/mamad/mamad_half.png'),
     background: 'Aktif berolahraga & sering ikut kegiatan kelas',
     weeklyAllowance: 120000,
     startMoney: 0,

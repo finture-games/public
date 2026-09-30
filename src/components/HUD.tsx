@@ -1,5 +1,5 @@
 import { CHARACTERS } from '../data/characters'
-import { formatRp } from '../lib/format'
+import { formatRp, assetUrl } from '../lib/format'
 import { targetPct } from '../lib/engine'
 import { useGameStore } from '../store/game'
 import PaydayParticles from './PaydayParticles'
@@ -55,7 +55,7 @@ export default function HUD() {
           <div className={`relative h-12 w-12 rounded-xl ${theme.gradient} p-0.5 shadow-sm flex-shrink-0 transition-colors duration-300`}>
             <div className="h-full w-full rounded-[8px] bg-white/20 overflow-hidden relative border border-white/30">
               <img
-                src={`/characters/${ch.id}/${ch.id}_1_normal.png`}
+                src={assetUrl(`/characters/${ch.id}/${ch.id}_1_normal.png`)}
                 alt={ch.name}
                 className="h-full w-full object-cover object-top scale-125 translate-y-0.5 filter drop-shadow"
               />

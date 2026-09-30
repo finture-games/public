@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
-import { signRp } from '../lib/format'
+import { signRp, assetUrl } from '../lib/format'
 import Button from './Button'
 import type { CardChoice, DecisionRecord } from '../data/types'
 import { useGameStore } from '../store/game'
@@ -26,7 +26,7 @@ export default function ConsequenceSheet({
     else if (charId === 'mamad') exprName = '5_friendly'
     else if (charId === 'alep' || charId === 'wawan') exprName = '5_focus'
   }
-  const exprAvatarPath = `/characters/${charId}/${charId}_${exprName}.png`
+  const exprAvatarPath = assetUrl(`/characters/${charId}/${charId}_${exprName}.png`)
 
   useEffect(() => {
     const start = performance.now()

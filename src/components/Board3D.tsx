@@ -5,6 +5,7 @@ import * as THREE from 'three'
 import { BOARD } from '../data/characters'
 import { TILE_COLORS, TileType } from '../data/types'
 import { useGameStore } from '../store/game'
+import { assetUrl } from '../lib/format'
 import Board2D from './Board2D'
 
 // 30 Monopoly tiles around a rounded rectangular track loop
@@ -193,8 +194,8 @@ function Pawn() {
   useEffect(() => {
     const loader = new THREE.TextureLoader()
     let isMounted = true
-    const idlePath = `/characters/${characterId}/${characterId}_6_full_body.png`
-    const walkPath = `/characters/${characterId}/${characterId}_7_walk.png`
+    const idlePath = assetUrl(`/characters/${characterId}/${characterId}_6_full_body.png`)
+    const walkPath = assetUrl(`/characters/${characterId}/${characterId}_7_walk.png`)
 
     loader.load(idlePath, (tIdle) => {
       tIdle.colorSpace = THREE.SRGBColorSpace
