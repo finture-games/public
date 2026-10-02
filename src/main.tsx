@@ -5,7 +5,7 @@ import './index.css'
 import { registerSW } from 'virtual:pwa-register'
 import { useGameStore } from './store/game'
 
-const CURRENT_VERSION = '20261002_v5'
+const CURRENT_VERSION = '20261002_v6'
 const lastVersion = localStorage.getItem('finture_app_ver')
 
 if (lastVersion !== CURRENT_VERSION) {

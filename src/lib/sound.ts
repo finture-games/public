@@ -9,11 +9,12 @@ export type SoundEffect =
   | 'negative'
   | 'win'
 
-export type BGMTrack = 'menu' | 'game' | 'alep' | 'angel' | 'alea' | 'wawan' | 'mamad' | string
+export type BGMTrack = 'menu' | 'game' | string
 
 class SoundManager {
   private muted: boolean = false
   private bgmAudio: HTMLAudioElement | null = null
+  private currentBgmTrack: string | null = null
   private sfxCache: Map<string, HTMLAudioElement> = new Map()
 
   constructor() {
@@ -31,6 +32,8 @@ class SoundManager {
 
     if (this.muted) {
       this.pauseBGM()
+    } else {
+      this.resumeBGM()
     }
     return this.muted
   }
@@ -40,6 +43,8 @@ class SoundManager {
     localStorage.setItem('finture_sound_muted', String(this.muted))
     if (this.muted) {
       this.pauseBGM()
+    } else {
+      this.resumeBGM()
     }
   }
 
@@ -77,27 +82,51 @@ class SoundManager {
       }
       this.bgmAudio = null
     }
+    this.currentBgmTrack = null
   }
 
-  // BGM temporarily disabled per user request until final music tracks are selected
-  public playBGM(_track: BGMTrack = 'menu'): void {
+  public playBGM(track: BGMTrack = 'menu'): void {
+    const targetFile = track === 'game' ? 'bgm_game' : 'bgm_menu'
+    
+    if (this.currentBgmTrack === targetFile && this.bgmAudio && !this.bgmAudio.paused) {
+      return
+    }
+
     this.stopBGM()
+    this.currentBgmTrack = targetFile
+    if (this.muted) return
+
+    const trackMp3 = assetUrl(`/sounds/${targetFile}.mp3`)
+    const audio = new Audio(trackMp3)
+    audio.loop = true
+    audio.volume = 0.4
+
+    this.bgmAudio = audio
+    audio.play().catch(() => {})
   }
 
   public playBGMForCharacter(_characterId: string): void {
-    this.stopBGM()
+    this.playBGM('game')
   }
 
   public startBGM(): void {
-    this.stopBGM()
+    this.playBGM('menu')
   }
 
   public pauseBGM(): void {
-    this.stopBGM()
+    if (this.bgmAudio) {
+      this.bgmAudio.pause()
+    }
   }
 
   public resumeBGM(): void {
-    this.stopBGM()
+    if (this.muted) return
+    if (this.bgmAudio && this.bgmAudio.paused) {
+      this.bgmAudio.play().catch(() => {})
+    } else if (!this.bgmAudio) {
+      const track = this.currentBgmTrack || 'bgm_menu'
+      this.playBGM(track)
+    }
   }
 }
 
