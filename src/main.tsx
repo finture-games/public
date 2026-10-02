@@ -5,7 +5,12 @@ import './index.css'
 import { registerSW } from 'virtual:pwa-register'
 import { useGameStore } from './store/game'
 
-registerSW({ immediate: true })
+const updateSW = registerSW({
+  immediate: true,
+  onNeedRefresh() {
+    updateSW(true)
+  },
+})
 
 // akses debug/tes untuk Alur Pengguna
 ;(window as unknown as { __finture: typeof useGameStore }).__finture = useGameStore
