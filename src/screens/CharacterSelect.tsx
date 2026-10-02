@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { CHARACTERS } from '../data/characters'
 import { useGameStore } from '../store/game'
 import { formatRp, assetUrl } from '../lib/format'
+import { soundManager } from '../lib/sound'
 import Button from '../components/Button'
 
 export default function CharacterSelect() {
@@ -23,6 +24,7 @@ export default function CharacterSelect() {
 
   const handleSelectCharacter = (charId: string) => {
     setSelectedId(charId)
+    soundManager.playBGMForCharacter(charId)
   }
 
   const handleConfirmStart = () => {

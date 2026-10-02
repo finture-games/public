@@ -7,20 +7,15 @@ import { assetUrl } from '../lib/format'
 export default function Login() {
   const setAuth = useGameStore((s) => s.setAuth)
   const updateProfile = useGameStore((s) => s.updateProfile)
+  const loadUserCloudData = useGameStore((s) => s.loadUserCloudData)
   const navigate = useGameStore((s) => s.navigate)
   const consentGiven = useGameStore((s) => s.settings.consentGiven)
   const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
   const [notice, setNotice] = useState('')
+  const [loading, setLoading] = useState(false)
 
-  const session = useGameStore((s) => s.session)
-
-  function afterAuth(nickname?: string) {
-    if (nickname) updateProfile({ nickname })
-    navigate(consentGiven ? (session ? 'home' : 'character') : 'consent')
-  }
-
-  function handleEmailLogin(e: React.FormEvent) {
+  async function handleEmailLogin(e: React.FormEvent) {
     e.preventDefault()
     if (!username.trim()) {
       setNotice('Masukkan Username / Nama Panggilan dulu, ya!')
@@ -34,6 +29,8 @@ export default function Login() {
     const cleanId = emailToUserId(email)
     const displayUsername = username.trim()
 
+    setLoading(true)
+
     setAuth(
       {
         id: cleanId,
@@ -42,7 +39,17 @@ export default function Login() {
       },
       'magic',
     )
-    afterAuth(displayUsername)
+    updateProfile({ nickname: displayUsername })
+
+    const restoredSession = await loadUserCloudData(cleanId)
+    setLoading(false)
+
+    if (restoredSession) {
+      navigate(consentGiven ? 'home' : 'consent')
+    } else {
+      const currentSession = useGameStore.getState().session
+      navigate(consentGiven ? (currentSession ? 'home' : 'character') : 'consent')
+    }
   }
 
   return (
@@ -156,9 +163,16 @@ export default function Login() {
             {/* Primary Aesthetic Chunky Yellow Button */}
             <button
               type="submit"
-              className="w-full mt-2 py-3.5 px-6 rounded-2xl bg-gradient-to-b from-yellow-300 via-amber-400 to-yellow-500 text-blue-950 font-black text-base uppercase tracking-wider shadow-[0_5px_0_#D97706] active:shadow-[0_2px_0_#D97706] active:translate-y-1 border-2 border-yellow-100 hover:brightness-105 transition-all cursor-pointer flex items-center justify-center"
+              disabled={loading}
+              className="w-full mt-2 py-3.5 px-6 rounded-2xl bg-gradient-to-b from-yellow-300 via-amber-400 to-yellow-500 text-blue-950 font-black text-base uppercase tracking-wider shadow-[0_5px_0_#D97706] active:shadow-[0_2px_0_#D97706] active:translate-y-1 border-2 border-yellow-100 hover:brightness-105 transition-all cursor-pointer flex items-center justify-center disabled:opacity-70"
             >
-              MASUK
+              {loading ? (
+                <span className="flex items-center gap-2">
+                  <span className="animate-spin text-lg">⏳</span> MEMUAT SESI...
+                </span>
+              ) : (
+                'MASUK'
+              )}
             </button>
           </form>
 

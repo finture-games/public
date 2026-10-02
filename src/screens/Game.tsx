@@ -12,6 +12,7 @@ import { BOARD, CHARACTERS, randomCardForType } from '../data/characters'
 import { SCENARIO_CARDS } from '../data/cards'
 import { formatRp } from '../lib/format'
 import { isBrokeNow, needsBankruptChoice } from '../lib/engine'
+import { soundManager } from '../lib/sound'
 
 const ROLL_MS = 700
 const LANDED_STATIONARY_PAUSE_MS = 400
@@ -29,14 +30,17 @@ export default function Game() {
 
   const [paused, setPaused] = useState(false)
   const [isSpinning, setIsSpinning] = useState(false)
+  const [muted, setMuted] = useState(() => soundManager.isMuted())
   const timers = useRef<number[]>([])
 
   useEffect(() => {
+    const charId = session?.characterId || 'alep'
+    soundManager.playBGMForCharacter(charId)
     const ts = timers.current
     return () => {
       ts.forEach((t) => clearTimeout(t))
     }
-  }, [])
+  }, [session?.characterId])
 
   if (!session) {
     return (
@@ -73,6 +77,7 @@ export default function Game() {
       return
     }
     if (type === 'gajian') {
+      soundManager.playSFX('gajian_claim')
       st.triggerPayday(ch.weeklyAllowance)
       st.setPhase('idle')
       return
@@ -92,6 +97,7 @@ export default function Game() {
   function onRoll() {
     const st = useGameStore.getState()
     if (st.phase !== 'idle') return
+    soundManager.playSFX('dice_roll')
     clearTimers()
     const value = roll()
     st.setDice(value)
@@ -118,8 +124,10 @@ export default function Game() {
           const s3 = useGameStore.getState()
           if (!s3.session) return
           step += 1
+          soundManager.playSFX('step')
           s3.moveTo(step)
           if (BOARD[step - 1].type === 'gajian' && step < to) {
+            soundManager.playSFX('gajian_claim')
             s3.triggerPayday(ch.weeklyAllowance)
           }
           if (step >= to) {
@@ -185,12 +193,14 @@ export default function Game() {
         <Board3D />
       </div>
       <HUD />
-      <button
-        onClick={() => setPaused(true)}
-        className="absolute top-3.5 right-3.5 z-40 h-11 w-11 rounded-2xl bg-white/95 backdrop-blur-md border-2 border-primary/20 font-display font-bold text-ink shadow-md flex items-center justify-center hover:bg-sky active:scale-95 transition-all text-base"
-      >
-        ⏸
-      </button>
+      <div className="absolute top-3.5 right-3.5 z-40 flex items-center gap-2">
+        <button
+          onClick={() => setPaused(true)}
+          className="h-11 w-11 rounded-2xl bg-white/95 backdrop-blur-md border-2 border-primary/20 font-display font-bold text-ink shadow-md flex items-center justify-center hover:bg-sky active:scale-95 transition-all text-base cursor-pointer"
+        >
+          ⏸
+        </button>
+      </div>
 
       {(phase === 'idle' || phase === 'rolling') && !bankruptOverlay && (
         <div className="absolute bottom-6 inset-x-0 z-30 flex justify-center">
@@ -274,6 +284,16 @@ export default function Game() {
             <h3 className="font-display font-semibold text-xl text-ink text-center">Jeda</h3>
             <Button variant="ghost" className="w-full" onClick={() => setPaused(false)}>
               ▶️ Lanjutkan bermain
+            </Button>
+            <Button
+              variant="ghost"
+              className="w-full flex items-center justify-center gap-2"
+              onClick={() => {
+                const next = soundManager.toggleMute()
+                setMuted(next)
+              }}
+            >
+              {muted ? '🔊 Buka Suara (Unmute)' : '🔇 Matikan Suara (Mute)'}
             </Button>
             <Button
               variant="ghost"

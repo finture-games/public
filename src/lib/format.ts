@@ -12,6 +12,8 @@ export function formatScore(n: number): string {
   return Math.round(n).toString()
 }
 
+const BUILD_VER = '20261002_v3'
+
 export function assetUrl(path: string): string {
   if (!path) return ''
   if (path.startsWith('http://') || path.startsWith('https://')) return path
@@ -20,9 +22,13 @@ export function assetUrl(path: string): string {
   const cleanBase = base.endsWith('/') ? base : base + '/'
   const cleanPath = path.startsWith('/') ? path.slice(1) : path
 
+  let fullUrl = ''
   if (base !== '/' && (path.startsWith(base) || cleanPath.startsWith(cleanBase.slice(1)))) {
-    return path.startsWith('/') ? path : '/' + path
+    fullUrl = path.startsWith('/') ? path : '/' + path
+  } else {
+    fullUrl = cleanBase + cleanPath
   }
 
-  return cleanBase + cleanPath
+  const sep = fullUrl.includes('?') ? '&' : '?'
+  return `${fullUrl}${sep}v=${BUILD_VER}`
 }

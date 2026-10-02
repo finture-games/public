@@ -53,6 +53,8 @@ export interface CharacterDef {
   color: string
   selectOffset?: number
   decisionOffset?: number
+  decisionLeftOffset?: number
+  decisionScale?: number
 }
 
 export interface TileDef {

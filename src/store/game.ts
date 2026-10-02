@@ -16,7 +16,7 @@ import {
   totalScore,
 } from '../lib/engine'
 import { insertDecision, syncSession } from '../lib/supabaseSync'
-import { saveSessionToFirebase, saveDecisionToFirebase } from '../lib/firebaseSync'
+import { saveSessionToFirebase, saveDecisionToFirebase, loadLatestSessionFromFirebase, loadUserHistoryFromFirebase } from '../lib/firebaseSync'
 
 export type Screen =
   | 'splash'
@@ -38,6 +38,12 @@ interface Toast {
   tone: 'positive' | 'negative' | 'info'
 }
 
+export interface CharOffset {
+  top: number
+  left: number
+  scale: number
+}
+
 interface GameState {
   screen: Screen
   authUser: AuthUser | null
@@ -56,12 +62,16 @@ interface GameState {
   reflectionAnswers: Record<string, string>
   paydayTrigger: number
   lastPaydayAmount: number
+  customOffsets: Record<string, CharOffset>
 
   navigate: (s: Screen) => void
   triggerPayday: (amount: number) => void
   setAuth: (u: AuthUser | null, provider: 'google' | 'magic' | 'guest' | null) => void
+  loadUserCloudData: (userId: string) => Promise<boolean>
   updateProfile: (p: Partial<Profile>) => void
   updateSettings: (s: Partial<Settings>) => void
+  setCustomOffset: (charId: string, offset: Partial<CharOffset>) => void
+  resetCustomOffsets: () => void
   startNewSession: (characterId: string) => void
   continueSession: () => void
   abandonSession: () => void
@@ -129,23 +139,69 @@ export const useGameStore = create<GameState>()(
       reflectionAnswers: {},
       paydayTrigger: 0,
       lastPaydayAmount: 0,
+      customOffsets: {},
 
       navigate: (s) => set({ screen: s }),
 
       triggerPayday: (amount) =>
-        set((st) => ({
-          paydayTrigger: Date.now(),
-          lastPaydayAmount: amount,
-          session: st.session
+        set((st) => {
+          const updatedSession = st.session
             ? { ...st.session, money: st.session.money + amount }
-            : null,
+            : null
+          if (st.authUser?.id && st.sessionId && updatedSession) {
+            void saveSessionToFirebase(st.authUser.id, st.sessionId, updatedSession)
+          }
+          return {
+            paydayTrigger: Date.now(),
+            lastPaydayAmount: amount,
+            session: updatedSession,
+          }
+        }),
+
+      setAuth: (u, provider) =>
+        set(() => ({
+          authUser: u,
+          authProvider: provider,
+          ...(u === null ? { sessionId: null, session: null, history: [] } : {}),
         })),
 
-      setAuth: (u, provider) => set({ authUser: u, authProvider: provider }),
+      loadUserCloudData: async (userId: string) => {
+        try {
+          const cloudSession = await loadLatestSessionFromFirebase(userId)
+          const cloudHistory = await loadUserHistoryFromFirebase(userId)
+          if (cloudSession) {
+            set({
+              sessionId: cloudSession.sessionId,
+              session: cloudSession.snapshot,
+              ...(cloudHistory.length > 0 ? { history: cloudHistory } : {}),
+            })
+            return true
+          } else if (cloudHistory.length > 0) {
+            set({ history: cloudHistory })
+          }
+          return false
+        } catch (err) {
+          console.warn('Gagal loadUserCloudData:', err)
+          return false
+        }
+      },
 
       updateProfile: (p) => set((st) => ({ profile: { ...st.profile, ...p } })),
 
       updateSettings: (s) => set((st) => ({ settings: { ...st.settings, ...s } })),
+
+      setCustomOffset: (charId, offset) =>
+        set((st) => {
+          const current = st.customOffsets[charId] || { top: -72, left: 10, scale: 1 }
+          return {
+            customOffsets: {
+              ...st.customOffsets,
+              [charId]: { ...current, ...offset },
+            },
+          }
+        }),
+
+      resetCustomOffsets: () => set({ customOffsets: {} }),
 
       startNewSession: (characterId) => {
         const sessionId = 'ses-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7)

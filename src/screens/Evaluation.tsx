@@ -1,9 +1,11 @@
+import { useEffect } from 'react'
 import { CHARACTERS } from '../data/characters'
 import { LEARNING_MATERIALS } from '../data/materials'
 import { ASPECT_LABEL, ASPECT_LIST } from '../data/types'
 import { formatRp } from '../lib/format'
 import { weakestAspect } from '../lib/engine'
 import { useGameStore } from '../store/game'
+import { soundManager } from '../lib/sound'
 import RadarChart from '../components/RadarChart'
 import Button from '../components/Button'
 
@@ -12,6 +14,10 @@ export default function Evaluation() {
   const session = useGameStore((s) => s.session)
   const history = useGameStore((s) => s.history)
   const summary = history[0]
+
+  useEffect(() => {
+    soundManager.playSFX('win')
+  }, [])
 
   if (!summary || !session) {
     return (

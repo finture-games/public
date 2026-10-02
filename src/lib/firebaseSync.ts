@@ -25,14 +25,15 @@ export async function saveSessionToFirebase(
 
 export async function loadLatestSessionFromFirebase(
   userId: string,
-): Promise<SessionSnapshot | null> {
+): Promise<{ sessionId: string; snapshot: SessionSnapshot } | null> {
   if (!db || !userId) return null
   try {
     const sessionsCol = collection(db, 'users', userId, 'sessions')
     const querySnapshot = await getDocs(sessionsCol)
     if (querySnapshot.empty) return null
 
-    let latest: SessionSnapshot | null = null
+    let latestSnapshot: SessionSnapshot | null = null
+    let latestId: string | null = null
     let maxTime = 0
 
     querySnapshot.forEach((docSnap) => {
@@ -40,11 +41,13 @@ export async function loadLatestSessionFromFirebase(
       const time = data.updatedAt || data.startedAt || 0
       if (time > maxTime && data.status === 'active') {
         maxTime = time
-        latest = data
+        latestSnapshot = data
+        latestId = docSnap.id
       }
     })
 
-    return latest
+    if (!latestSnapshot || !latestId) return null
+    return { sessionId: latestId, snapshot: latestSnapshot }
   } catch (err) {
     console.warn('Gagal memuat sesi dari Firebase:', err)
     return null
@@ -73,5 +76,42 @@ export async function saveDecisionToFirebase(
     })
   } catch (err) {
     console.warn('Gagal menyimpan keputusan ke Firebase:', err)
+  }
+}
+
+export async function loadUserHistoryFromFirebase(
+  userId: string,
+): Promise<any[]> {
+  if (!db || !userId) return []
+  try {
+    const sessionsCol = collection(db, 'users', userId, 'sessions')
+    const querySnapshot = await getDocs(sessionsCol)
+    if (querySnapshot.empty) return []
+
+    const history: any[] = []
+    querySnapshot.forEach((docSnap) => {
+      const data = docSnap.data() as SessionSnapshot & { updatedAt?: number }
+      if (data.status !== 'active') {
+        history.push({
+          id: docSnap.id,
+          characterId: data.characterId,
+          date: data.startedAt || Date.now(),
+          score: 0,
+          profileLabel: 'Selesai',
+          aspectScores: data.aspectScores,
+          money: data.money,
+          savings: data.savings,
+          targetReached: true,
+          targetName: '',
+          targetAmount: 0,
+          decisionsCount: data.decisions?.length || 0,
+          status: data.status,
+        })
+      }
+    })
+    return history
+  } catch (err) {
+    console.warn('Gagal memuat riwayat dari Firebase:', err)
+    return []
   }
 }

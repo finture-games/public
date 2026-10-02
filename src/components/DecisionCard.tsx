@@ -5,6 +5,7 @@ import { TILE_COLORS } from '../data/types'
 import { useGameStore } from '../store/game'
 import { assetUrl } from '../lib/format'
 import { CHARACTERS } from '../data/characters'
+import { soundManager } from '../lib/sound'
 
 export function getCharacterExpression(characterId: string, tileType: TileType): string {
   let exprName = '4_surprised'
@@ -39,16 +40,30 @@ export default function DecisionCard({
   card,
   reduceMotion,
   onChoose,
+  previewCharId,
+  previewExpression,
+  previewOffset,
 }: {
   card: ScenarioCard
   reduceMotion: boolean
   onChoose: (choiceId: string) => void
+  previewCharId?: string
+  previewExpression?: string
+  previewOffset?: { top: number; left: number; scale: number }
 }) {
   const session = useGameStore((s) => s.session)
-  const charId = session?.characterId ?? 'alep'
+  const customOffsets = useGameStore((s) => s.customOffsets)
+  const charId = previewCharId ?? session?.characterId ?? 'alep'
   const charDef = CHARACTERS.find((c) => c.id === charId)
-  const offset = charDef?.decisionOffset ?? -72
-  const exprAvatarPath = getCharacterExpression(charId, card.tileType)
+
+  const activeCustom = customOffsets[charId]
+  const topOffset = previewOffset?.top ?? activeCustom?.top ?? charDef?.decisionOffset ?? -72
+  const leftOffset = previewOffset?.left ?? activeCustom?.left ?? charDef?.decisionLeftOffset ?? 10
+  const scale = previewOffset?.scale ?? activeCustom?.scale ?? charDef?.decisionScale ?? 1
+
+  const exprAvatarPath = previewExpression
+    ? assetUrl(`/characters/${charId}/${charId}_${previewExpression}.png`)
+    : getCharacterExpression(charId, card.tileType)
 
   const [flipped, setFlipped] = useState(reduceMotion)
   if (!flipped && !reduceMotion) {
@@ -64,10 +79,15 @@ export default function DecisionCard({
         className="relative rounded-[20px] bg-white border-2 border-primary/20 shadow-[0_12px_32px_rgba(30,27,58,0.25)] max-w-[420px] mx-auto"
         style={{ perspective: 1000 }}
       >
-        {/* Offside Pop-Out Character Expression Avatar - Customized per character offset */}
+        {/* Offside Pop-Out Character Expression Avatar - Fixed position & size across all screen sizes */}
         <div
-          style={{ top: `${offset}px` }}
-          className="absolute left-2.5 sm:left-3.5 z-30 w-20 h-22 sm:w-24 sm:h-26 pointer-events-none filter drop-shadow-[0_6px_12px_rgba(0,0,0,0.3)]"
+          style={{
+            top: `${topOffset}px`,
+            left: `${leftOffset}px`,
+            transform: `scale(${scale})`,
+            transformOrigin: 'bottom left',
+          }}
+          className="absolute z-30 w-24 h-26 pointer-events-none filter drop-shadow-[0_6px_12px_rgba(0,0,0,0.3)] transition-transform duration-75"
         >
           <img
             src={exprAvatarPath}
@@ -76,9 +96,9 @@ export default function DecisionCard({
           />
         </div>
 
-        {/* Top Header Banner with Left Indent for Offside Character Avatar */}
+        {/* Top Header Banner with Fixed Left Indent for Offside Character Avatar */}
         <div
-          className="px-3.5 py-2.5 rounded-t-[18px] flex items-center justify-between border-b border-black/10 relative overflow-hidden pl-24 sm:pl-28"
+          className="px-3.5 py-2.5 rounded-t-[18px] flex items-center justify-between border-b border-black/10 relative overflow-hidden pl-28"
           style={{ backgroundColor: TILE_COLORS[card.tileType] }}
         >
           <div>
@@ -97,8 +117,16 @@ export default function DecisionCard({
           transition={{ duration: reduceMotion ? 0 : 0.6, delay: reduceMotion ? 0 : 0.15 }}
           className="p-3 space-y-2"
         >
-          <div className="font-display font-bold text-ink text-base leading-snug">{card.title}</div>
-          <div className="bg-sky/40 border border-primary/10 p-2.5 rounded-xl text-xs text-ink/90 font-body leading-relaxed font-medium">
+          {/* Question / Situation Title */}
+          <div className="font-display font-black text-slate-800 text-base leading-snug tracking-tight">
+            {card.title}
+          </div>
+
+          {/* Distinct Story/Question Card Box - Soft Indigo/Sky Gradient */}
+          <div className="bg-gradient-to-br from-sky-50 to-blue-100/70 border-2 border-sky-200/80 p-3 rounded-2xl text-xs text-slate-800 font-body leading-relaxed font-semibold shadow-inner">
+            <div className="text-[10px] uppercase tracking-wider font-extrabold text-sky-700 mb-1 flex items-center gap-1">
+              <span>📖</span> Situasi:
+            </div>
             {card.story}
           </div>
 
@@ -107,16 +135,27 @@ export default function DecisionCard({
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="pt-0.5 space-y-1.5"
+                className="pt-1 space-y-2"
               >
+                <div className="text-[10px] uppercase tracking-wider font-extrabold text-amber-700 px-0.5 flex items-center gap-1">
+                  <span>👉</span> Pilih Keputusanmu:
+                </div>
                 {card.choices.map((c) => (
                   <button
                     key={c.id}
-                    onClick={() => onChoose(c.id)}
-                    className="w-full text-left bg-white hover:bg-sky/60 border border-primary/20 hover:border-primary text-ink font-display font-semibold text-xs p-2.5 rounded-xl transition-all shadow-sm flex items-center justify-between group active:scale-[0.99] cursor-pointer"
+                    onClick={() => {
+                      soundManager.playSFX('click')
+                      if (c.moneyDelta > 0 || c.savingsDelta > 0) {
+                        soundManager.playSFX('positive')
+                      } else if (c.moneyDelta < 0 || c.savingsDelta < 0) {
+                        soundManager.playSFX('negative')
+                      }
+                      onChoose(c.id)
+                    }}
+                    className="w-full text-left bg-gradient-to-r from-amber-50 via-yellow-50/80 to-amber-100/60 hover:from-amber-100 hover:to-yellow-100 border-2 border-amber-300/80 hover:border-amber-400 text-slate-900 font-display font-bold text-xs p-3 rounded-xl transition-all shadow-sm flex items-center justify-between group active:scale-[0.99] cursor-pointer"
                   >
-                    <span>{c.label}</span>
-                    <span className="text-primary font-bold text-sm opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all shrink-0 ml-1.5">
+                    <span className="leading-snug pr-2">{c.label}</span>
+                    <span className="w-6 h-6 rounded-full bg-amber-400 text-blue-950 font-black text-xs flex items-center justify-center group-hover:scale-110 group-hover:bg-amber-500 transition-all shrink-0 shadow-xs">
                       ➔
                     </span>
                   </button>

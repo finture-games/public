@@ -49,7 +49,7 @@ export default function HUD() {
       {/* Flying Payday Suction Effect */}
       <PaydayParticles trigger={paydayTrigger} amount={lastPaydayAmount} />
 
-      <div className="absolute top-2 left-2 right-12 z-30 pointer-events-none">
+      <div className="absolute top-4 sm:top-5 left-2.5 right-12 z-30 pointer-events-none">
         <div className="pointer-events-auto inline-flex items-center bg-white/95 backdrop-blur-md rounded-2xl border-2 border-ink/15 p-1.5 shadow-[0_6px_16px_rgba(30,27,58,0.12)] max-w-[400px]">
           {/* 1. Left Character Avatar Box (With Unique Character Gradient) */}
           <div className={`relative h-12 w-12 rounded-xl ${theme.gradient} p-0.5 shadow-sm flex-shrink-0 transition-colors duration-300`}>

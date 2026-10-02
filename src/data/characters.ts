@@ -19,7 +19,9 @@ export const CHARACTERS: CharacterDef[] = [
     targetAmount: 250000,
     color: '#EF4444',
     selectOffset: 0,
-    decisionOffset: -72,
+    decisionOffset: -90,
+    decisionLeftOffset: 10,
+    decisionScale: 1,
   },
   {
     id: 'angel',
@@ -33,7 +35,9 @@ export const CHARACTERS: CharacterDef[] = [
     targetAmount: 300000,
     color: '#F59E0B',
     selectOffset: 4,
-    decisionOffset: -68,
+    decisionOffset: -60,
+    decisionLeftOffset: 10,
+    decisionScale: 1,
   },
   {
     id: 'alea',
@@ -47,7 +51,9 @@ export const CHARACTERS: CharacterDef[] = [
     targetAmount: 280000,
     color: '#3B82F6',
     selectOffset: 2,
-    decisionOffset: -70,
+    decisionOffset: -91,
+    decisionLeftOffset: 10,
+    decisionScale: 1,
   },
   {
     id: 'wawan',
@@ -61,7 +67,9 @@ export const CHARACTERS: CharacterDef[] = [
     targetAmount: 320000,
     color: '#22C55E',
     selectOffset: -2,
-    decisionOffset: -74,
+    decisionOffset: -96,
+    decisionLeftOffset: 10,
+    decisionScale: 1,
   },
   {
     id: 'mamad',
@@ -75,7 +83,9 @@ export const CHARACTERS: CharacterDef[] = [
     targetAmount: 310000,
     color: '#6366F1',
     selectOffset: 0,
-    decisionOffset: -72,
+    decisionOffset: -93,
+    decisionLeftOffset: 10,
+    decisionScale: 1,
   },
 ]
 

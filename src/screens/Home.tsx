@@ -1,9 +1,10 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { useGameStore } from '../store/game'
 import { CHARACTERS } from '../data/characters'
 import Board3D from '../components/Board3D'
 import { formatRp, assetUrl } from '../lib/format'
+import { soundManager } from '../lib/sound'
 
 export default function Home() {
   const navigate = useGameStore((s) => s.navigate)
@@ -13,6 +14,10 @@ export default function Home() {
   const authUser = useGameStore((s) => s.authUser)
   const [confirmNew, setConfirmNew] = useState(false)
   const hasActive = session?.status === 'active'
+
+  useEffect(() => {
+    soundManager.playBGM('menu')
+  }, [])
 
   // Find character from active session, fallback to Alep as default showcase
   const activeChar = (session?.characterId
@@ -187,10 +192,10 @@ export default function Home() {
           initial={{ y: 20, opacity: 0, scale: 0.96 }}
           animate={{ y: 0, opacity: 1, scale: 1 }}
           transition={{ delay: 0.1, type: 'spring', damping: 18 }}
-          className="w-full h-44 rounded-3xl overflow-hidden border-4 border-white shadow-[0_12px_30px_rgba(14,165,233,0.25)] relative bg-sky-950/20"
+          className="w-full h-52 sm:h-56 rounded-3xl overflow-hidden border-4 border-white shadow-[0_12px_30px_rgba(14,165,233,0.25)] relative bg-sky-950/20"
         >
           <div className="absolute inset-0 z-0 opacity-95">
-            <Board3D />
+            <Board3D isPreview={true} />
           </div>
           <div className="absolute top-2.5 left-3 z-10 bg-blue-950/75 backdrop-blur-md px-3 py-1 rounded-full border border-white/40 text-white text-[10px] font-bold shadow-sm">
             🎲 Papan Petualangan 3D
