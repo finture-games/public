@@ -12,7 +12,7 @@ export function formatScore(n: number): string {
   return Math.round(n).toString()
 }
 
-const BUILD_VER = '20261002_v3'
+const BUILD_VER = '20261002_v4'
 
 export function assetUrl(path: string): string {
   if (!path) return ''
