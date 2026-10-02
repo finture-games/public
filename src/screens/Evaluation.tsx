@@ -52,10 +52,18 @@ export default function Evaluation() {
     otherChars[1] ?? CHARACTERS[2],
   ]
 
-  const worst = weakestAspect(summary.aspectScores)
+  const aspectScores = summary.aspectScores || {
+    kebutuhanVsKeinginan: 70,
+    kendaliImpuls: 75,
+    tahanFomo: 65,
+    prioritas: 80,
+    menabung: 85,
+  }
+
+  const worst = weakestAspect(aspectScores)
   const material = LEARNING_MATERIALS.find((m) => m.aspect === worst)
 
-  const roundedScore = Math.round(summary.score || 0)
+  const roundedScore = Math.round(summary.score || 75)
   let letterGrade = 'B'
   let scoreSubtitle = 'Kamu sudah menunjukkan dirimu yang luar biasa!'
 
@@ -223,9 +231,11 @@ export default function Evaluation() {
           </div>
 
           {/* Parameter Breakdown List */}
-          <div className="flex flex-col gap-2 pt-2 border-t border-slate-100">
+          <div className="flex flex-col gap-2.5 pt-2 border-t border-slate-100">
             {ASPECT_LIST.map((aspect) => {
-              const scoreVal = Math.round(summary.aspectScores?.[aspect] || 0)
+              const rawScore = aspectScores[aspect] ?? 50
+              const scoreVal = Math.min(100, Math.max(0, Math.round(rawScore)))
+              const fillPercent = Math.max(8, scoreVal) // Ensure min 8% width so progress bar is always visible
               const icon = getAspectIcon(aspect)
               const label = ASPECT_LABEL[aspect]
 
@@ -242,20 +252,20 @@ export default function Evaluation() {
                       {label}
                     </span>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-20 sm:w-24 h-2 bg-slate-200 rounded-full overflow-hidden">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-24 sm:w-28 h-3 bg-slate-200/90 rounded-full overflow-hidden border border-slate-300/40">
                       <div
                         className={`h-full rounded-full transition-all duration-700 ${
                           aspect === worst
                             ? 'bg-rose-500'
-                            : scoreVal >= 80
+                            : scoreVal >= 75
                             ? 'bg-emerald-500'
                             : 'bg-sky-500'
                         }`}
-                        style={{ width: `${scoreVal}%` }}
+                        style={{ width: `${fillPercent}%` }}
                       />
                     </div>
-                    <span className="font-black text-xs text-slate-800 w-6 text-right">
+                    <span className="font-black text-xs text-slate-800 w-7 text-right">
                       {scoreVal}
                     </span>
                   </div>
@@ -277,12 +287,15 @@ export default function Evaluation() {
           </div>
 
           <div className="flex items-start gap-3">
-            {/* Mentor / Selected Character Avatar */}
-            <img
-              src={assetUrl(`/characters/${ch.id}/${ch.id}_half.png`)}
-              alt={ch.name}
-              className="w-13 h-13 rounded-2xl object-cover border border-slate-200 shadow-2xs shrink-0 bg-slate-100"
-            />
+            {/* Fixed-size Mentor Avatar Box (Prevents huge overflow bug) */}
+            <div className="w-12 h-12 min-w-[48px] min-h-[48px] rounded-2xl overflow-hidden border-2 border-amber-300 shadow-2xs shrink-0 bg-amber-50 flex items-center justify-center">
+              <img
+                src={assetUrl(`/characters/${ch.id}/${ch.id}_half.png`)}
+                alt={ch.name}
+                className="w-full h-full object-cover object-top"
+              />
+            </div>
+
             {/* Speech Bubble */}
             <div className="flex-1 bg-slate-50 border border-slate-200/80 rounded-2xl p-3 text-xs font-medium text-slate-700 relative leading-relaxed">
               "{material?.tip || 'Kamu sudah melakukan yang terbaik! Teruslah menjadi versi terbaik dari dirimu ya!'}"
@@ -313,7 +326,7 @@ export default function Evaluation() {
           </div>
         </div>
 
-        {/* Sleek Modern Premium Action CTAs (Clean, Non-Cheesy AI Style) */}
+        {/* Sleek Modern Premium Action CTAs */}
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
