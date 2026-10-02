@@ -20,6 +20,23 @@ class SoundManager {
   constructor() {
     const storedMute = localStorage.getItem('finture_sound_muted')
     this.muted = storedMute === 'true'
+
+    if (typeof window !== 'undefined') {
+      const unlock = () => {
+        if (this.bgmAudio && this.bgmAudio.paused && !this.muted) {
+          this.bgmAudio.play().catch(() => {})
+        } else if (!this.bgmAudio && !this.muted) {
+          this.playBGM(this.currentBgmTrack || 'menu')
+        }
+        window.removeEventListener('click', unlock)
+        window.removeEventListener('touchstart', unlock)
+        window.removeEventListener('pointerdown', unlock)
+      }
+
+      window.addEventListener('click', unlock, { passive: true })
+      window.addEventListener('touchstart', unlock, { passive: true })
+      window.addEventListener('pointerdown', unlock, { passive: true })
+    }
   }
 
   public isMuted(): boolean {
@@ -82,27 +99,30 @@ class SoundManager {
       }
       this.bgmAudio = null
     }
-    this.currentBgmTrack = null
   }
 
   public playBGM(track: BGMTrack = 'menu'): void {
     const targetFile = track === 'game' ? 'bgm_game' : 'bgm_menu'
-    
-    if (this.currentBgmTrack === targetFile && this.bgmAudio && !this.bgmAudio.paused) {
+    this.currentBgmTrack = targetFile
+
+    if (this.bgmAudio && this.bgmAudio.src.includes(targetFile) && !this.bgmAudio.paused) {
       return
     }
 
     this.stopBGM()
-    this.currentBgmTrack = targetFile
     if (this.muted) return
 
     const trackMp3 = assetUrl(`/sounds/${targetFile}.mp3`)
     const audio = new Audio(trackMp3)
     audio.loop = true
-    audio.volume = 0.4
+    audio.volume = 0.45
 
     this.bgmAudio = audio
-    audio.play().catch(() => {})
+
+    // Try playing audio (will succeed immediately if unlocked or on first user click)
+    audio.play().catch(() => {
+      // Browser autoplay policy blocked autoplay; will resume on first click/touch
+    })
   }
 
   public playBGMForCharacter(_characterId: string): void {
