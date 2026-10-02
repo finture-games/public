@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig({
-  base: process.env.VITE_BASE_PATH || process.env.BASE_PATH || './',
+  base: process.env.VITE_BASE_PATH || process.env.BASE_PATH || '/public/',
   server: {
     host: true, // Enables local network access via IP address (e.g. http://10.107.122.75:5173)
   },

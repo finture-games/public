@@ -12,23 +12,30 @@ export function formatScore(n: number): string {
   return Math.round(n).toString()
 }
 
-const BUILD_VER = '20261002_v7'
+const BUILD_VER = '20261002_v8'
 
 export function assetUrl(path: string): string {
   if (!path) return ''
-  if (path.startsWith('http://') || path.startsWith('https://')) return path
-
-  const base = import.meta.env.BASE_URL || '/'
-  const cleanBase = base.endsWith('/') ? base : base + '/'
-  const cleanPath = path.startsWith('/') ? path.slice(1) : path
-
-  let fullUrl = ''
-  if (base !== '/' && (path.startsWith(base) || cleanPath.startsWith(cleanBase.slice(1)))) {
-    fullUrl = path.startsWith('/') ? path : '/' + path
-  } else {
-    fullUrl = cleanBase + cleanPath
+  if (path.startsWith('http://') || path.startsWith('https://') || path.startsWith('data:') || path.startsWith('blob:')) {
+    return path
   }
 
-  const sep = fullUrl.includes('?') ? '&' : '?'
-  return `${fullUrl}${sep}v=${BUILD_VER}`
+  // Strip existing version query parameters if any
+  const cleanPathNoQuery = path.split('?')[0]
+
+  // Detect base URL from Vite
+  let base = import.meta.env.BASE_URL || '/'
+  if (!base.endsWith('/')) base += '/'
+
+  // Clean raw path (remove leading slashes, redundant base prefixes)
+  let clean = cleanPathNoQuery
+  if (clean.startsWith('/finture_games/')) clean = clean.substring('/finture_games/'.length)
+  if (clean.startsWith('/public/')) clean = clean.substring('/public/'.length)
+  if (clean.startsWith('finture_games/')) clean = clean.substring('finture_games/'.length)
+  if (clean.startsWith('public/')) clean = clean.substring('public/'.length)
+  if (clean.startsWith(base)) clean = clean.substring(base.length)
+  clean = clean.replace(/^(\.\/|\/)+/, '')
+
+  const fullUrl = `${base}${clean}`
+  return `${fullUrl}?v=${BUILD_VER}`
 }
