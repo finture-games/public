@@ -281,7 +281,7 @@ function CharacterCard({
   isSelected: boolean
   onSelect: () => void
 }) {
-  const avatarPath = character.avatar.startsWith('http') || character.avatar.startsWith('/finture_games/')
+  const avatarPath = character.avatar.startsWith('http')
     ? character.avatar
     : assetUrl(character.avatar)
 
