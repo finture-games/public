@@ -5,7 +5,7 @@ import './index.css'
 import { registerSW } from 'virtual:pwa-register'
 import { useGameStore } from './store/game'
 
-const CURRENT_VERSION = '20261002_v7'
+const CURRENT_VERSION = '20261002_v9'
 const lastVersion = localStorage.getItem('finture_app_ver')
 
 if (lastVersion !== CURRENT_VERSION) {
@@ -20,9 +20,7 @@ if (lastVersion !== CURRENT_VERSION) {
     }
     if ('caches' in window) {
       caches.keys().then((names) => {
-        for (const name of names) {
-          caches.delete(name)
-        }
+        Promise.all(names.map((name) => caches.delete(name))).catch(() => {})
       })
     }
   }
