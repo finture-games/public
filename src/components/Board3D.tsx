@@ -938,9 +938,10 @@ class Board3DErrorBoundary extends Component<{ children: ReactNode }, { hasError
 export default function Board3D({ isPreview = false }: { isPreview?: boolean }) {
   return (
     <Board3DErrorBoundary>
-      <div className={`relative w-full h-full select-none bg-gradient-to-b from-sky-300 via-sky-100 to-emerald-100 ${isPreview ? '' : 'min-h-[460px]'}`}>
+      <div className={`relative w-full h-full overflow-hidden select-none bg-gradient-to-b from-sky-300 via-sky-100 to-emerald-100 ${isPreview ? '' : 'min-h-[460px]'}`}>
         <Canvas
           shadows
+          style={{ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
           camera={{ position: isPreview ? [0, 14.0, 11.5] : [0, 13.5, 12.5], fov: isPreview ? 45 : 42 }}
           gl={{ antialias: true, alpha: false, powerPreference: 'high-performance' }}
         >
