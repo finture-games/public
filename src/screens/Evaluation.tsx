@@ -84,29 +84,49 @@ export default function Evaluation() {
     scoreSubtitle = 'Belajar dari pengalaman & tetap semangat mencoba lagi!'
   }
 
-  // Dynamic Mentor Advice (Praise on Master/High Score, Interactive Tips on Lower Scores)
-  const allAbove80 = ASPECT_LIST.every((a) => (aspectScores[a] ?? 50) >= 80)
-  const isPerfectMaster = allAbove80 || roundedScore >= 88
-
-  const getMentorAdviceText = () => {
-    if (isPerfectMaster) {
-      return 'Gokil! Kamu bener-bener Financial Master! 🌟 Pengendalian diri dan skala prioritasmu luar biasa. Dari urusan kebutuhan, nahan FOMO, sampai nabung, semuanya dieksekusi dengan sangat matang. Pertahankan kebiasaan keren ini ya!'
-    }
+  // Financial Learning & Actionable Advice based on aspect that needs improvement
+  const getMentorAdvice = () => {
     switch (worst) {
       case 'kebutuhanVsKeinginan':
-        return "Keputusanmu secara umum sudah keren! Cuma kadang 'keinginan lucu' suka menyamar jadi 'kebutuhan mendesak' nih. Coba terapkan jeda 24 jam sebelum checkout barang yang sifatnya pelengkap ya!"
+        return {
+          title: 'Membedakan Kebutuhan vs Keinginan',
+          text: 'Fokus perbaikan utamamu ada pada membedakan kebutuhan esensial dan keinginan sesaat. Keinginan sering menyamar menjadi kebutuhan mendesak saat melihat barang menarik atau ajakan teman.',
+          tip: 'Terapkan aturan "Jeda 24 Jam" sebelum membeli barang non-pokok. Tanyakan pada dirimu: "Kalau aku tidak beli hari ini, apakah ada masalah nyata besok?" Jika tidak, tunda pembeliannya.',
+        }
       case 'kendaliImpuls':
-        return 'Keren sudah bertahan sejauh ini! Tapi awas jebakan flash sale & diskon kilat. Ingat, diskon 50% bukan berarti hemat setengah harga kalau aslinya barang itu nggak kamu perlukan.'
+        return {
+          title: 'Mengendalikan Pembelian Impulsif',
+          text: 'Fokus perbaikan utamamu adalah kendali impuls saat berbelanja. Godaan diskon kilat atau promo terbatas sering memicu keputusan belanja terburu-buru sebelum sempat berpikir panjang.',
+          tip: 'Terapkan aturan "Wishlist 3 Hari". Simpan barang yang ingin dibeli di daftar tunggu selama minimal 3 hari. Sebagian besar rasa ingin beli akan hilang sebelum hari ketiga.',
+        }
       case 'tahanFomo':
-        return 'Gak semua tren medsos atau ajakan nongkrong mahal harus diikutin kok. Nongkrong seru dan momen asik bareng teman tetap bisa dibuat dengan cara yang ramah kantong!'
+        return {
+          title: 'Ketahanan Terhadap FOMO',
+          text: 'Fokus perbaikan utamamu adalah menahan godaan FOMO (Fear of Missing Out). Mengikuti tren viral atau ajakan nongkrong mahal karena takut dibilang ketinggalan zaman bisa menguras anggaran dengan cepat.',
+          tip: 'Beranilah menolak ajakan yang melebihi batas anggaranmu atau tawarkan alternatif yang lebih ramah kantong. Teman yang baik akan menghargai komitmen finansialmu.',
+        }
       case 'prioritas':
-        return "Uang saku kita punya batas, jadi pastikan kewajiban & hal esensial beres di awal. Terapkan metode 'Pay Yourself First' begitu dapat uang saku!"
+        return {
+          title: 'Menentukan Skala Prioritas',
+          text: 'Fokus perbaikan utamamu adalah menentukan mana yang harus didahulukan. Saat uang saku terbatas, pastikan kewajiban dan kebutuhan pokok selalu beres di awal sebelum hal lainnya.',
+          tip: 'Gunakan metode "Pay Yourself First". Begitu uang saku masuk, langsung pisahkan 20-30% untuk tabungan dan kewajiban utama, baru sisanya dipakai untuk operasional mingguan.',
+        }
       case 'menabung':
-        return 'Menabung itu bukan nunggu ada sisa uang di akhir, tapi disisihkan di awal hari. Nabung nominal kecil tapi rutin jauh lebih sakti daripada nunggu nominal besar!'
+        return {
+          title: 'Membangun Kebiasaan Menabung',
+          text: 'Fokus perbaikan utamamu adalah konsistensi menabung. Menabung bukan tentang menunggu sisa uang di akhir minggu, melainkan disiplin menyisihkan di awal saat uang baru masuk.',
+          tip: 'Tentukan target yang jelas dan tabung secara rutin dengan nominal tetap setiap minggu, sekecil apapun itu. Konsistensi rutin jauh lebih berharga daripada menabung besar tapi jarang.',
+        }
       default:
-        return material?.tip || 'Kamu sudah menunjukkan performa yang hebat! Terus asah kecerdasan finansialmu!'
+        return {
+          title: 'Evaluasi Keputusan Finansial',
+          text: material?.body || 'Evaluasi kembali setiap pengeluaran dan pastikan kebutuhan esensial selalu aman sebelum memenuhi keinginan.',
+          tip: material?.tip || 'Catat pengeluaran mingguanmu untuk memantau kemana uang mengalir.',
+        }
     }
   }
+
+  const adviceData = getMentorAdvice()
 
   const getAspectIcon = (aspect: Aspect) => {
     switch (aspect) {
@@ -310,19 +330,24 @@ export default function Evaluation() {
           </div>
         </motion.div>
 
-        {/* Mentor Advice Card (Pesan untukmu) */}
+        {/* Mentor Advice Card (Saran & Pembelajaran Finansial) */}
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.25 }}
-          className="w-full bg-white/95 backdrop-blur-md rounded-3xl border border-white/60 p-4 shadow-lg flex flex-col gap-3 relative"
+          className="w-full bg-white/95 backdrop-blur-md rounded-3xl border border-white/60 p-4 sm:p-5 shadow-lg flex flex-col gap-3 relative"
         >
-          <div className="self-start bg-amber-400 text-slate-900 font-extrabold text-[11px] px-3.5 py-1 rounded-full shadow-sm flex items-center gap-1 uppercase tracking-wider">
-            <span>{isPerfectMaster ? '🏆 Pujian Finansial' : '⚡ Pesan Untukmu'}</span>
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="bg-slate-900 text-white font-extrabold text-[11px] px-3.5 py-1 rounded-full shadow-sm flex items-center gap-1.5 uppercase tracking-wider">
+              <span>📚 Saran Perbaikan Finansial</span>
+            </div>
+            <div className="bg-amber-100 border border-amber-300 text-amber-900 font-bold text-[10px] px-2.5 py-0.5 rounded-full">
+              Fokus: {ASPECT_LABEL[worst]}
+            </div>
           </div>
 
-          <div className="flex items-start gap-3">
-            {/* Fixed-size Mentor Avatar Box (Prevents huge overflow bug) */}
+          <div className="flex items-start gap-3 pt-1">
+            {/* Fixed-size Mentor Avatar Box */}
             <div className="w-12 h-12 min-w-[48px] min-h-[48px] rounded-2xl overflow-hidden border-2 border-amber-300 shadow-sm shrink-0 bg-amber-50 flex items-center justify-center">
               <img
                 src={assetUrl(`/characters/${ch.id}/${ch.id}_half.png`)}
@@ -331,10 +356,19 @@ export default function Evaluation() {
               />
             </div>
 
-            {/* Speech Bubble */}
-            <div className="flex-1 bg-slate-50 border border-slate-200/80 rounded-2xl p-3 text-xs font-medium text-slate-700 relative leading-relaxed shadow-2xs">
-              "{getMentorAdviceText()}"
-              <div className="mt-1.5 font-bold text-[11px] text-slate-900 text-right">
+            {/* Speech / Learning Bubble */}
+            <div className="flex-1 flex flex-col gap-2 bg-slate-50 border border-slate-200/80 rounded-2xl p-3.5 text-xs text-slate-700 relative leading-relaxed shadow-2xs">
+              <div className="font-bold text-slate-900 text-xs flex items-center gap-1.5">
+                <span>{getAspectIcon(worst)}</span> {adviceData.title}
+              </div>
+              <p className="font-medium text-slate-600 leading-relaxed">
+                {adviceData.text}
+              </p>
+              <div className="mt-1 bg-amber-50/80 border border-amber-200/80 rounded-xl p-2.5 text-slate-800 font-semibold text-[11px] leading-normal flex items-start gap-1.5">
+                <span className="text-amber-600 text-xs shrink-0">💡</span>
+                <span><b>Tips Praktis:</b> {adviceData.tip}</span>
+              </div>
+              <div className="mt-1 font-bold text-[11px] text-slate-900 text-right">
                 — Mentor ({ch.name})
               </div>
             </div>
