@@ -28,8 +28,8 @@ export default function RiskWarning({
           Awan badai terlihat...
         </h3>
         <p className="mt-1 text-sm text-white/80 leading-relaxed">
-          Kamu sudah <b>3x</b> berbelanja karena {TILE_LABEL[tileType].toLowerCase()}. Kalau
-          pola ini terus, begini proyeksinya:
+          Kamu sudah <b>3x</b> mengambil keputusan boros atau impulsif pada {TILE_LABEL[tileType].toLowerCase()}. Kalau
+          pola ini terus berlanjut, begini proyeksinya:
         </p>
         <div className="mt-3 grid grid-cols-2 gap-2">
           <div className="rounded-chunky bg-white/10 px-3 py-2">

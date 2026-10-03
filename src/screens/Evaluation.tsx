@@ -84,6 +84,30 @@ export default function Evaluation() {
     scoreSubtitle = 'Belajar dari pengalaman & tetap semangat mencoba lagi!'
   }
 
+  // Dynamic Mentor Advice (Praise on Master/High Score, Interactive Tips on Lower Scores)
+  const allAbove80 = ASPECT_LIST.every((a) => (aspectScores[a] ?? 50) >= 80)
+  const isPerfectMaster = allAbove80 || roundedScore >= 88
+
+  const getMentorAdviceText = () => {
+    if (isPerfectMaster) {
+      return 'Gokil! Kamu bener-bener Financial Master! 🌟 Pengendalian diri dan skala prioritasmu luar biasa. Dari urusan kebutuhan, nahan FOMO, sampai nabung, semuanya dieksekusi dengan sangat matang. Pertahankan kebiasaan keren ini ya!'
+    }
+    switch (worst) {
+      case 'kebutuhanVsKeinginan':
+        return "Keputusanmu secara umum sudah keren! Cuma kadang 'keinginan lucu' suka menyamar jadi 'kebutuhan mendesak' nih. Coba terapkan jeda 24 jam sebelum checkout barang yang sifatnya pelengkap ya!"
+      case 'kendaliImpuls':
+        return 'Keren sudah bertahan sejauh ini! Tapi awas jebakan flash sale & diskon kilat. Ingat, diskon 50% bukan berarti hemat setengah harga kalau aslinya barang itu nggak kamu perlukan.'
+      case 'tahanFomo':
+        return 'Gak semua tren medsos atau ajakan nongkrong mahal harus diikutin kok. Nongkrong seru dan momen asik bareng teman tetap bisa dibuat dengan cara yang ramah kantong!'
+      case 'prioritas':
+        return "Uang saku kita punya batas, jadi pastikan kewajiban & hal esensial beres di awal. Terapkan metode 'Pay Yourself First' begitu dapat uang saku!"
+      case 'menabung':
+        return 'Menabung itu bukan nunggu ada sisa uang di akhir, tapi disisihkan di awal hari. Nabung nominal kecil tapi rutin jauh lebih sakti daripada nunggu nominal besar!'
+      default:
+        return material?.tip || 'Kamu sudah menunjukkan performa yang hebat! Terus asah kecerdasan finansialmu!'
+    }
+  }
+
   const getAspectIcon = (aspect: Aspect) => {
     switch (aspect) {
       case 'kebutuhanVsKeinginan':
@@ -123,20 +147,31 @@ export default function Evaluation() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-sky-400 via-sky-100 to-slate-50 flex flex-col items-center justify-start pb-14 font-body select-none">
+    <div className="relative min-h-screen flex flex-col items-center justify-start pb-14 font-body select-none overflow-x-hidden">
+      {/* Background Image Matching Splash */}
+      <img
+        src={assetUrl('/theme/background.jpeg')}
+        alt="Background"
+        className="fixed inset-0 w-full h-full object-cover object-center z-0 pointer-events-none"
+      />
+      {/* Soft Ambient Overlay for Readability */}
+      <div className="fixed inset-0 bg-gradient-to-b from-sky-950/40 via-sky-900/25 to-slate-900/60 pointer-events-none z-0 backdrop-blur-[2px]" />
+
       {/* Container Box */}
-      <div className="w-full max-w-md px-4 pt-5 flex flex-col gap-4">
+      <div className="relative z-10 w-full max-w-md px-4 pt-5 flex flex-col gap-4">
         {/* Navigation Bar */}
         <div className="flex items-center justify-between z-10">
           <button
             onClick={() => navigate('home')}
-            className="px-3.5 py-1.5 rounded-full bg-white/90 backdrop-blur-md text-slate-700 font-bold text-xs shadow-sm border border-slate-200/80 hover:bg-white active:scale-95 transition-all flex items-center gap-1 cursor-pointer"
+            className="px-3.5 py-1.5 rounded-full bg-white/95 backdrop-blur-md text-slate-800 font-bold text-xs shadow-md border border-white/40 hover:bg-white active:scale-95 transition-all flex items-center gap-1 cursor-pointer"
           >
             ← Beranda
           </button>
-          <span className="font-display font-black text-white text-xs tracking-wider uppercase drop-shadow-sm">
-            Hasil & Evaluasi
-          </span>
+          <div className="bg-slate-900/80 backdrop-blur-md border border-white/25 px-4 py-1.5 rounded-full shadow-md flex items-center justify-center">
+            <span className="font-display font-black text-amber-300 text-xs tracking-wider uppercase">
+              HASIL & EVALUASI
+            </span>
+          </div>
           <div className="w-16" />
         </div>
 
@@ -256,11 +291,11 @@ export default function Evaluation() {
                     <div className="w-24 sm:w-28 h-3 bg-slate-200/90 rounded-full overflow-hidden border border-slate-300/40">
                       <div
                         className={`h-full rounded-full transition-all duration-700 ${
-                          aspect === worst
-                            ? 'bg-rose-500'
-                            : scoreVal >= 75
+                          scoreVal >= 80
                             ? 'bg-emerald-500'
-                            : 'bg-sky-500'
+                            : scoreVal >= 60
+                            ? 'bg-amber-400'
+                            : 'bg-rose-500'
                         }`}
                         style={{ width: `${fillPercent}%` }}
                       />
@@ -280,15 +315,15 @@ export default function Evaluation() {
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.25 }}
-          className="w-full bg-white rounded-3xl border border-slate-200/90 p-4 shadow-md flex flex-col gap-3 relative"
+          className="w-full bg-white/95 backdrop-blur-md rounded-3xl border border-white/60 p-4 shadow-lg flex flex-col gap-3 relative"
         >
-          <div className="self-start bg-amber-400 text-slate-900 font-extrabold text-[11px] px-3 py-1 rounded-full shadow-2xs flex items-center gap-1 uppercase tracking-wider">
-            <span>⚡ Pesan Untukmu</span>
+          <div className="self-start bg-amber-400 text-slate-900 font-extrabold text-[11px] px-3.5 py-1 rounded-full shadow-sm flex items-center gap-1 uppercase tracking-wider">
+            <span>{isPerfectMaster ? '🏆 Pujian Finansial' : '⚡ Pesan Untukmu'}</span>
           </div>
 
           <div className="flex items-start gap-3">
             {/* Fixed-size Mentor Avatar Box (Prevents huge overflow bug) */}
-            <div className="w-12 h-12 min-w-[48px] min-h-[48px] rounded-2xl overflow-hidden border-2 border-amber-300 shadow-2xs shrink-0 bg-amber-50 flex items-center justify-center">
+            <div className="w-12 h-12 min-w-[48px] min-h-[48px] rounded-2xl overflow-hidden border-2 border-amber-300 shadow-sm shrink-0 bg-amber-50 flex items-center justify-center">
               <img
                 src={assetUrl(`/characters/${ch.id}/${ch.id}_half.png`)}
                 alt={ch.name}
@@ -297,8 +332,8 @@ export default function Evaluation() {
             </div>
 
             {/* Speech Bubble */}
-            <div className="flex-1 bg-slate-50 border border-slate-200/80 rounded-2xl p-3 text-xs font-medium text-slate-700 relative leading-relaxed">
-              "{material?.tip || 'Kamu sudah melakukan yang terbaik! Teruslah menjadi versi terbaik dari dirimu ya!'}"
+            <div className="flex-1 bg-slate-50 border border-slate-200/80 rounded-2xl p-3 text-xs font-medium text-slate-700 relative leading-relaxed shadow-2xs">
+              "{getMentorAdviceText()}"
               <div className="mt-1.5 font-bold text-[11px] text-slate-900 text-right">
                 — Mentor ({ch.name})
               </div>

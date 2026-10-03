@@ -70,6 +70,20 @@ export function projectionForPattern(
   return { spent, perDay, month: perDay * 30, year: perDay * 365 }
 }
 
+export function isRiskyChoice(card: ScenarioCard, choice: CardChoice): boolean {
+  // Pilihan dianggap berisiko/boros jika ada penalti aspek finansial (< 0)
+  const hasAspectPenalty = Object.values(choice.aspectDeltas).some((d) => (d ?? 0) < 0)
+  if (hasAspectPenalty) return true
+
+  // Atau jika pada petak godaan ('keinginan', 'fomo', 'belanja') ada pengeluaran dan ada opsi lain yang lebih hemat
+  if (['keinginan', 'fomo', 'belanja'].includes(card.tileType) && choice.moneyDelta < 0) {
+    const hasCheaperChoice = card.choices.some((c) => c.moneyDelta > choice.moneyDelta)
+    if (hasCheaperChoice) return true
+  }
+
+  return false
+}
+
 export function applyChoice(
   snapshot: SessionSnapshot,
   card: ScenarioCard,
@@ -93,16 +107,17 @@ export function applyChoice(
     savingsDelta: 0,
   }
   const patternKey = card.tileType
-  const isSpend = netDelta < 0
+  const isRisky = isRiskyChoice(card, choice)
+
   return {
     ...snapshot,
     money,
     savings: 0,
     aspectScores,
     decisions: [...snapshot.decisions, decision],
-    choicePattern: isSpend
+    choicePattern: isRisky
       ? { ...snapshot.choicePattern, [patternKey]: (snapshot.choicePattern[patternKey] ?? 0) + 1 }
-      : { ...snapshot.choicePattern },
+      : { ...snapshot.choicePattern, [patternKey]: 0 }, // Reset streak saat membuat keputusan bijak
   }
 }
 

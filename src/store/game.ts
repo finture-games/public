@@ -10,6 +10,7 @@ import {
   BAILOUT_AMOUNT,
   clampAspect,
   isBrokeNow,
+  isRiskyChoice,
   needsBankruptChoice,
   profileLabel,
   targetPct,
@@ -272,8 +273,9 @@ export const useGameStore = create<GameState>()(
         if (!choice) return
         const updated = applyChoice(st.session, st.currentCard, choice)
         const pattern = updated.choicePattern[st.currentCard.tileType] ?? 0
+        const isRisky = isRiskyChoice(st.currentCard, choice)
         const risk =
-          pattern === 3 && choice.moneyDelta < 0
+          pattern >= 3 && isRisky
             ? st.currentCard.tileType
             : st.pendingRisk
         set({
@@ -363,7 +365,17 @@ export const useGameStore = create<GameState>()(
         void tp
       },
 
-      dismissRisk: () => set({ pendingRisk: null }),
+      dismissRisk: () =>
+        set((st) => ({
+          pendingRisk: null,
+          session:
+            st.session && st.pendingRisk
+              ? {
+                  ...st.session,
+                  choicePattern: { ...st.session.choicePattern, [st.pendingRisk]: 0 },
+                }
+              : st.session,
+        })),
     }),
     {
       name: 'finture-game-v1',
