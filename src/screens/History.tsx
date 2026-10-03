@@ -1,6 +1,6 @@
 import { CHARACTERS } from '../data/characters'
 import { useGameStore } from '../store/game'
-import { formatScore } from '../lib/format'
+import { assetUrl, formatScore } from '../lib/format'
 import Button from '../components/Button'
 
 export default function History() {
@@ -35,11 +35,21 @@ export default function History() {
             return (
               <div
                 key={h.id + h.date}
-                className="rounded-card bg-white border-2 border-ink/10 p-3.5 font-body"
+                className="rounded-card bg-white border-2 border-ink/10 p-3.5 font-body shadow-xs"
               >
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="text-2xl">{ch?.emoji ?? '🎲'}</span>
+                  <div className="flex items-center gap-3">
+                    <div className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-2xl overflow-hidden border-2 border-slate-200/90 bg-sky-50 shadow-2xs flex items-center justify-center shrink-0">
+                      {ch ? (
+                        <img
+                          src={ch.avatar ? assetUrl(ch.avatar) : assetUrl(`/characters/${ch.id}/${ch.id}_half.png`)}
+                          alt={ch.name}
+                          className="w-full h-full object-cover object-top"
+                        />
+                      ) : (
+                        <span className="text-xl">🎲</span>
+                      )}
+                    </div>
                     <div>
                       <div className="font-display font-semibold text-ink text-sm">
                         {ch?.name ?? 'Petualang'}
