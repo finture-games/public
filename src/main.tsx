@@ -5,7 +5,7 @@ import './index.css'
 import { registerSW } from 'virtual:pwa-register'
 import { useGameStore } from './store/game'
 
-const CURRENT_VERSION = '20261003_v11'
+const CURRENT_VERSION = '20261003_v12'
 const lastVersion = localStorage.getItem('finture_app_ver')
 
 if (lastVersion !== CURRENT_VERSION) {
@@ -20,7 +20,11 @@ if (lastVersion !== CURRENT_VERSION) {
     }
     if ('caches' in window) {
       caches.keys().then((names) => {
-        Promise.all(names.map((name) => caches.delete(name))).catch(() => {})
+        Promise.all(names.map((name) => caches.delete(name))).then(() => {
+          window.location.reload()
+        }).catch(() => {
+          window.location.reload()
+        })
       })
     }
   }
@@ -30,6 +34,16 @@ const updateSW = registerSW({
   immediate: true,
   onNeedRefresh() {
     updateSW(true)
+    setTimeout(() => {
+      window.location.reload()
+    }, 500)
+  },
+  onRegisteredSW(_swUrl, registration) {
+    if (registration) {
+      setInterval(() => {
+        void registration.update()
+      }, 10 * 60 * 1000)
+    }
   },
 })
 
